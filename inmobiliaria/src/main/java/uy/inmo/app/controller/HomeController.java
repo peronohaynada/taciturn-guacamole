@@ -1,9 +1,13 @@
-package uy.inmo.app;
+package uy.inmo.app.controller;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +29,12 @@ public class HomeController {
 	
 	/**
 	 * Simply selects the home view to render by returning its name.
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonGenerationException 
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale, Model model) {
+	public @ResponseBody String home(Locale locale) throws JsonGenerationException, JsonMappingException, IOException {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		
 		Date date = new Date();
@@ -35,14 +42,17 @@ public class HomeController {
 		
 		String formattedDate = dateFormat.format(date);
 		
-		model.addAttribute("serverTime", formattedDate );
+		ObjectMapper objMapper = new ObjectMapper();
+		String response = objMapper.writeValueAsString(formattedDate);
 		
-		return "home";
+		return response;
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public @ResponseBody String getHelloWorld(@PathVariable(value = "id") String id) {
-		return id;
+	public @ResponseBody String getHelloWorld(@PathVariable(value = "id") String id) throws JsonGenerationException, JsonMappingException, IOException {
+		ObjectMapper obj = new ObjectMapper();
+		String json = obj.writeValueAsString(id);
+		return json;
 	}
 
 
